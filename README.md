@@ -1,13 +1,9 @@
 # PokeGAN
-Trying to generate pokemon sprites using a DCGAN
+A generative adversarial network that uses a dataset of 64x64 pokemon sprites to generate new pokemon-looking pictures.
 
-For now, using torch default implementation for a DCGAN on approximately 5000 sprites from pokemon games in generations 3,4,5.
-Default implementation only creates noise.
-
-Problem: The default implementation only manages to generate noise
-Reason: The Discriminator very quickly manages to sort all samples correctly which bottlenecks the Generator's training.
-
-Potential issues to try and remedy:
-- Sample size is limited to ~5000 pictures where many are similar or only have color differences. 
-- There are around 500 different species of pokemon in the database. Some have more (different) sprites available than others.
-  - This should probably have an impact on batch sizing and number of iterations. 
+How to run:
+- Download the datset using the script "pokemon_dl.py". 
+- The dataset is downloaded to the directory of your choice as specified by the parameter "POKEDIR". 
+- Resize the dataset to 64x64 using the script "resize.py".
+- Make sure the placement of the dataset is consistent with the parameter "dataroot" in DCGAN_main.py. This can be either an regular folder or a folder in Google Drive for Colab usage. 
+- Run the file "DCGAN_main.py".
