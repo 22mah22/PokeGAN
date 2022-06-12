@@ -1,5 +1,6 @@
 import os
 from PIL import Image
+import torch
 
 def resize_images():
     SOURCE = 'pokesprites/'
@@ -21,4 +22,6 @@ def resize_images():
         else:
             pic.save(DIR+path, 'png')
 
-resize_images()
+print(torch.version.cuda)
+print(torch.cuda.is_available())
+#resize_images()

@@ -249,7 +249,8 @@ for epoch in range(num_epochs):
         # Compute error of D as sum over the fake and the real batches
         errD = errD_real + errD_fake
         # Update D
-        optimizerD.step()
+        if epoch > 10:
+            optimizerD.step()
 
         ############################
         # (2) Update G network: maximize log(D(G(z)))
