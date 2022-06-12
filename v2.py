@@ -40,7 +40,7 @@ device = torch.device("cuda:0" if (torch.cuda.is_available() and ngpu > 0) else 
 With batch size of 128 (recommended in paper) it took 8 epochs for generator 
 to output something over than pure white (actually purple) noise. 
 Nvm it seems my code is wrong. 
-I take back everything, it outputted something neat right away.
+I take back everything, it outputted something neat.
 Well, not that neat, but it's something that with batch_size = 64 would have 
 come at epoch 10 or something.
 """
@@ -48,7 +48,7 @@ come at epoch 10 or something.
 # Loading and visualizing the data
 
 
-# Root directory for dataset
+# Root directory for dataset, change accordingly
 dataroot = "/content/gdrive/My Drive/data/"
 
 
@@ -171,7 +171,8 @@ def initialize_weights(model):
         if isinstance(m, (nn.Conv2d, nn.ConvTranspose2d, nn.BatchNorm2d)):
             nn.init.normal_(m.weight.data, 0.0, 0.02)
 """
-Difference with Pytorch doc: batchNorm has different norm vals, mean = 1.0
+Difference with Pytorch doc: batchNorm has different norm vals, mean = 1.0,
+Where that comes from I don't know.
 """
 
 # Model initialization
@@ -179,6 +180,7 @@ Difference with Pytorch doc: batchNorm has different norm vals, mean = 1.0
 netG = Generator().to(device) 
 netD = Discriminator().to(device)
 
+# Initializing weight following above normal distribution
 netG.apply(initialize_weights)
 netD.apply(initialize_weights)
 
@@ -207,11 +209,13 @@ optD = optim.Adam(netD.parameters(),lr=lr_g,betas=(beta1,0.999))
 loss_func = BCELoss() # using BCE to compute loss
 
 black = torch.tensor(-1.)#.to(device) # Do not send to device.
-
+# All tensors are normalized between -1 and 1, with -1 corresponding to black
 
 def change_bg_to_black(imgs):
   """
-  Given a set of 128 imgs of dim 3*64*64, sets the background colour to black
+  Given a set of 128 imgs of dim 3*64*64, sets the background colour to black.
+  This function is imperfect, as it merely changes all colours == bg_colour 
+  to black, but it should work well enough (not too many issues).
   """
   for img in imgs:
 
@@ -346,15 +350,19 @@ plt.ylabel("Loss")
 plt.legend()
 plt.show()
 
+# Transofrms saved images of the fixed noise into GIF so we may see
+# the evolution of the generator's output
 import matplotlib.animation as animation
 from IPython.display import HTML
 
 fig = plt.figure(figsize=(8,8))
 plt.axis("off")
-ims = [[plt.imshow(np.transpose(i,(1,2,0)), animated=True)] for i in img_list[len(img_list)//2:]]
+ims = [[plt.imshow(np.transpose(i,(1,2,0)), animated=True)] for i in img_list[len(img_list)//2:]] # choose index at will
 ani = animation.ArtistAnimation(fig, ims, interval=1000, repeat_delay=1000, blit=True)
 
 HTML(ani.to_jshtml())
+
+# Plotting the images
 
 # Grab a batch of real images from the dataloader
 real_batch = next(iter(dataloader))
